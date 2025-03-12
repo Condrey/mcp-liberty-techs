@@ -4,6 +4,8 @@ import NetworkAdapter from "@node-escpos/network-adapter";
 import { Receipt } from "@prisma/client";
 import { format } from "date-fns";
 
+export const maxDuration = 60; // 60 seconds
+export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const apiAddress = "192.168.28.38";
   try {
@@ -65,20 +67,9 @@ export async function POST(req: Request) {
           .text("Transaction items")
           .style("NORMAL");
 
-        printer.tableCustom([
-          {
-            text: `1 x ${name}`,
-            align: "LEFT",
-            width: 1,
-          },
-          {
-            text: `${getLocaleCurrency(amount + balance)}`,
-            align: "LEFT",
-            width: 1,
-          },
-        ]);
-
-        printer.text(serialNumber);
+          printer.text( `1 x ${name}`);
+          printer.text(getLocaleCurrency(amount + balance));
+          printer.text(serialNumber);
 
         // Calculations
         printer
