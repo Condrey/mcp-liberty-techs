@@ -11,6 +11,7 @@ import {
 import { upsertReceipt } from './action'
 import { Receipt } from '@prisma/client'
 import { toast, useSonner } from 'sonner'
+import kyInstance from '@/lib/ky'
   
   export const useAddReceiptMutation=()=>{
     const queryKey:QueryKey =  ["receipt-list"]
@@ -26,7 +27,12 @@ import { toast, useSonner } from 'sonner'
                 }
                 return old.map(d=>d.id===data.id?data:d)
             })
-            toast('Receipt list updated')
+            const response = await kyInstance
+            .post("/api/printer", {
+              body: JSON.stringify(data),
+            })
+            .json<string>();
+          toast(response);
         },
         onError(error, variables, context) {
             console.error(error)
