@@ -1,32 +1,52 @@
 "use client";
 
+import { DataTable } from "@/components/data-table/data-table";
+import LoadingButton from "@/components/loading-button";
 import { Receipt } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
-import { getAllReceipts } from "./action";
-import { DataTable } from "@/components/data-table/receipt-data-table";
+import BtnAddReceipt from "./(tables)/btn-add-receipt";
 import { useReceiptsColumn } from "./(tables)/columns";
+import { useFetchReceiptsQuery } from "./hook";
 
 interface ListOfReceiptsProps {
   receipts: Receipt[];
 }
 export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
-  const { data, status, error, refetch, isFetching } = useQuery({
-    queryKey: ["receipt-list"],
-    queryFn: getAllReceipts,
-    initialData: receipts,
-  });
-
+  const { data, status, error, refetch, isFetching } =
+    useFetchReceiptsQuery(receipts);
+  if (status === "error") {
+    console.error(error);
+  }
   return (
-    <div>
-      <h1 className="text-xl">Recent receipts</h1>
+    <div className="space-y-2 tracking-wide">
       {status === "error" ? (
-        <div>An error occurred</div>
+        <div className="flex flex-col gap-4 justify-center items-center min-h-[20rem]">
+          <p className="text-center max-w-sm text-muted-foreground">
+            An error occurred
+          </p>
+          <LoadingButton loading={isFetching} onClick={() => refetch()}>
+            Refresh
+          </LoadingButton>
+        </div>
       ) : status === "success" && !data.length ? (
-        <div>No receipts in the db yet.</div>
+        <div className="flex flex-col gap-4 justify-center items-center min-h-[20rem]">
+          <p className="text-center max-w-sm text-muted-foreground">
+            No receipts in the db yet. Please add
+          </p>
+          <BtnAddReceipt />
+        </div>
       ) : (
-        <DataTable columns={useReceiptsColumn} data={data}
-        filterColumn={{id:'client',label:'buyer'}}
-/>      )}
+        <DataTable
+          columns={useReceiptsColumn}
+          data={data}
+          filterColumn={{ id: "client", label: "buyer" }}
+          tableHeaderSection={
+            <div className="w-full flex justify-end">
+              <h1 className="text-xl text-center">Recently added receipts</h1>
+              <BtnAddReceipt />
+            </div>
+          }
+        />
+      )}
     </div>
   );
 }
