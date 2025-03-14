@@ -47,9 +47,7 @@ export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
               </div>
             }
           />
-          <span className=" w-full text-center  text-muted-foreground">
-            https://mcp-liberty-techs.vercel.app{" "}
-          </span>
+      
         </div>
       )}
     </div>

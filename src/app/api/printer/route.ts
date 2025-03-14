@@ -5,7 +5,7 @@ import { Receipt, ShopCategory } from "@prisma/client";
 import { format } from "date-fns";
 import { join } from "path";
 
-export const maxDuration = 6000; // 60 seconds
+export const maxDuration = 60; // 60 seconds
 export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const apiAddress = "192.168.28.38";
