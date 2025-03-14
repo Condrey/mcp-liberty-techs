@@ -3,7 +3,6 @@
 import { DataTable } from "@/components/data-table/data-table";
 import LoadingButton from "@/components/loading-button";
 import { Receipt } from "@prisma/client";
-import Link from "next/link";
 import BtnAddReceipt from "./(tables)/btn-add-receipt";
 import { useReceiptsColumn } from "./(tables)/columns";
 import { useFetchReceiptsQuery } from "./hook";
@@ -36,7 +35,7 @@ export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
           <BtnAddReceipt />
         </div>
       ) : (
-        <div className=" flex w-full overflow-y-auto max-w-md sm:max-w-2xl mx-auto md:max-w-4xl lg:max-w-5xl xl:max-w-fit">
+        <div className="gap-4 flex flex-col w-full overflow-y-auto max-w-md sm:max-w-2xl mx-auto md:max-w-4xl lg:max-w-5xl xl:max-w-fit">
           <DataTable
             columns={useReceiptsColumn}
             data={data}
@@ -48,12 +47,9 @@ export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
               </div>
             }
           />
-          <Link
-            href={`https://mcp-liberty-techs.vercel.app/`}
-            className=" w-full text-center underline text-blue-500"
-          >
-            Online link
-          </Link>
+          <span className=" w-full text-center  text-muted-foreground">
+            https://mcp-liberty-techs.vercel.app{" "}
+          </span>
         </div>
       )}
     </div>
