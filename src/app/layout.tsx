@@ -31,9 +31,9 @@ export default function RootLayout({
       >
        <ReactQueryProvider>
        <main className="size-full h-dvh">{children}
-       <span className=" w-full  sticky bottom-0 text-xs text-center  text-muted-foreground">
+       {/* <span className=" w-full  sticky bottom-0 text-xs text-center  text-muted-foreground">
             https://mcp-liberty-techs.vercel.app{" "}
-          </span>
+          </span> */}
        </main>
         <Toaster />
 

@@ -1,11 +1,11 @@
-import { getLocaleCurrency, webNameMCP } from "@/lib/utils";
+import { getLocaleCurrency } from "@/lib/utils";
 import { Image, Printer } from "@node-escpos/core";
 import NetworkAdapter from "@node-escpos/network-adapter";
 import { Receipt, ShopCategory } from "@prisma/client";
 import { format } from "date-fns";
 import { join } from "path";
 
-export const maxDuration = 60; // 60 seconds
+export const maxDuration = 60000; // 60 seconds
 export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   const apiAddress = "192.168.28.38";
@@ -19,9 +19,11 @@ export async function POST(req: Request) {
       createdAt,
       name,
       serialNumber,
-      updatedAt,category,model
+      updatedAt,
+      category,
+      model,
     }: Receipt = await req.json();
-    const isMCP = category ===ShopCategory.MCP
+    const isMCP = category === ShopCategory.MCP;
     const shopSeller = "Oruk Oscar";
     const shopAddress = "Opp. KCB bank, 2nd Floor, Oyam Road";
     const ShopContact = "07750635211";
@@ -40,7 +42,10 @@ export async function POST(req: Request) {
             statusText: "Failed in printer",
           });
         }
-        const filePath = join(process.cwd(), isMCP?"src/app/assets/mcp.png":"src/app/assets/liberty.png");
+        const filePath = join(
+          process.cwd(),
+          isMCP ? "src/app/assets/mcp.png" : "src/app/assets/liberty.png"
+        );
         const image = await Image.load(filePath);
         // Logo
         printer.image(image, "s8");
@@ -53,11 +58,12 @@ export async function POST(req: Request) {
           .text("") // Empty line for spacing
           .style("B")
           .align("CT")
-          .text("SALES RECEIPT.") .text("") // Empty line for spacing
+          .text("SALES RECEIPT.")
+          .text("") // Empty line for spacing
           .text("") // Empty line for spacing
           .text("") // Empty line for spacing
           .size(1, 1)
-          .style("NORMAL")       
+          .style("NORMAL")
           .align("LT")
           .style("B")
           .text("Buyer")
@@ -76,7 +82,7 @@ export async function POST(req: Request) {
 
         printer.text(`1 x ${name}`);
         printer.text(getLocaleCurrency(amount + balance));
-        printer.text(serialNumber||'N/A');
+        printer.text(serialNumber || "N/A");
 
         // Calculations
         printer
