@@ -20,7 +20,7 @@ export const useCustomSearchParams = () => {
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(name, value);
-      router.refresh();
+      // router.refresh();
       router.push(currentPathname + "?" + params.toString());
     },
     [searchParams, currentPathname, router]
