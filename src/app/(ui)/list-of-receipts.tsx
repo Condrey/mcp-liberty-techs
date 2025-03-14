@@ -35,17 +35,19 @@ export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
           <BtnAddReceipt />
         </div>
       ) : (
-        <DataTable
-          columns={useReceiptsColumn}
-          data={data}
-          filterColumn={{ id: "client", label: "buyer" }}
-          tableHeaderSection={
-            <div className="w-full flex justify-end">
-              <h1 className="text-xl text-center">Recently added receipts</h1>
-              <BtnAddReceipt />
-            </div>
-          }
-        />
+        <div className=" flex w-full overflow-y-auto max-w-md sm:max-w-2xl mx-auto md:max-w-4xl lg:max-w-5xl xl:max-w-fit">
+          <DataTable
+            columns={useReceiptsColumn}
+            data={data}
+            filterColumn={{ id: "client", label: "buyer" }}
+            tableHeaderSection={
+              <div className="w-full flex justify-end">
+                <h1 className="text-xl text-center">Recently added receipts</h1>
+                <BtnAddReceipt />
+              </div>
+            }
+          />
+        </div>
       )}
     </div>
   );

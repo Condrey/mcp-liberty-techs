@@ -2,10 +2,12 @@
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Badge } from "@/components/ui/badge";
+import { shopCategories } from "@/lib/enums";
 import { formatCurrency } from "@/lib/utils";
-import { Receipt } from "@prisma/client";
+import { Receipt, ShopCategory } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, sub } from "date-fns";
+import { UserIcon } from "lucide-react";
 import DropDownReceipt from "./drop-down-receipt";
 
 export const useReceiptsColumn: ColumnDef<Receipt>[] = [
@@ -20,36 +22,87 @@ export const useReceiptsColumn: ColumnDef<Receipt>[] = [
       <DataTableColumnHeader column={column} title="Buyer" />
     ),
     cell: ({ row }) => (
-      <div>
-        <div className=" capitalize">{row.original.client}</div>
-        <div className="text-muted-foreground text-xs">
-          {row.original.contact}
+      <div className="flex gap-2 items-center">
+        <UserIcon
+          className=" fill-foreground/50 border rounded-full "
+          strokeWidth={0.5}
+        />
+
+        <div>
+          <div className=" capitalize">{row.original.client}</div>
+          <div className="text-muted-foreground text-xs">
+            {row.original.contact}
+          </div>
         </div>
       </div>
     ),
+  },
+  {
+    accessorKey: "category",
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Shop category" />;
+    },
+    cell: ({ row }) => {
+      const c = shopCategories[row.original.category];
+      const Icon = c.icon;
+      const isMCP = row.original.category===ShopCategory.MCP
+      return (
+        <div>
+          <Badge variant={isMCP?'outline':'secondary'}><Icon className="fill-background"/>{c.name}</Badge>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "name",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Product" />
     ),
-    cell: ({ row }) => (
-      <div>
-        <div className=" capitalize">{row.original.name}</div>
-        <div className="text-muted-foreground text-xs uppercase">
-          {row.original.serialNumber}
+    cell: ({ row }) => {
+      const Icon = shopCategories[row.original.category].icon;
+      return (
+        <div className="flex gap-2 items-center">
+          {/* <Icon className=" fill-foreground/50" strokeWidth={0.5}/> */}
+          <div>
+            <div className=" capitalize">{row.original.name}</div>
+            <div className="text-muted-foreground text-xs uppercase">
+              {row.original.serialNumber}
+            </div>
+          </div>
         </div>
-      </div>
-    ),
+      );
+    },
   },
   {
-    accessorKey: "amount",
+    id: "Price",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Amount" />
+      <DataTableColumnHeader column={column} title="Price" />
     ),
     cell: ({ row }) => (
-      <span className="">{formatCurrency(row.original.amount)}</span>
+      <span className="">{formatCurrency(row.original.amount+row.original.balance)}</span>
     ),
+  },  {
+    accessorKey: "amount",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Amount paid" />
+    ),
+    cell: ({ row }) => {
+      const balance = row.original.balance;
+      const isCleared = balance <= 0;
+
+      return(
+        <div>
+          
+      <span className="">{formatCurrency(row.original.amount)}</span>
+          <p
+       
+            className=" capitalize text-xs italic text-muted-foreground"
+        
+          >
+            {isCleared ? "--No balance--" : ` balance of ${formatCurrency(balance)}`}
+          </p>
+      </div>
+    )},
   },
   {
     accessorKey: "balance",
@@ -72,12 +125,11 @@ export const useReceiptsColumn: ColumnDef<Receipt>[] = [
                   ? "Balance is less than six month"
                   : "Balance is greater than six month"
               }
-              className=" capitalize "
+              className=" capitalize w-full"
               variant={
                 isCleared
-                  ? "secondary"
-                  : isLessThanSixMonth
                   ? "go"
+                 
                   : "destructive"
               }
             >

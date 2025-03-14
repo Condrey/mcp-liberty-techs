@@ -4,7 +4,7 @@ import { twMerge } from "tailwind-merge";
 
 export const webNameMCP = "Mr. Clean Piece";
 export const webNameLiberty = "Liberty Computers";
-const webCurrency = "UGX";
+export const webCurrency = "UGX";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

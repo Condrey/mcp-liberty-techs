@@ -1,8 +1,9 @@
 import { getLocaleCurrency, webNameMCP } from "@/lib/utils";
-import { Printer } from "@node-escpos/core";
+import { Image, Printer } from "@node-escpos/core";
 import NetworkAdapter from "@node-escpos/network-adapter";
-import { Receipt } from "@prisma/client";
+import { Receipt, ShopCategory } from "@prisma/client";
 import { format } from "date-fns";
+import { join } from "path";
 
 export const maxDuration = 6000; // 60 seconds
 export const dynamic = "force-dynamic";
@@ -18,8 +19,9 @@ export async function POST(req: Request) {
       createdAt,
       name,
       serialNumber,
-      updatedAt,
+      updatedAt,category,model
     }: Receipt = await req.json();
+    const isMCP = category ===ShopCategory.MCP
     const shopSeller = "Oruk Oscar";
     const shopAddress = "Opp. KCB bank, 2nd Floor, Oyam Road";
     const ShopContact = "07750635211";
@@ -38,21 +40,24 @@ export async function POST(req: Request) {
             statusText: "Failed in printer",
           });
         }
-        // const filePath = join(__dirname, "../assets/liberty.png");
-        // const image = await Image.load(filePath);
-        // // Logo
-        // printer.image(image, "s8");
+        const filePath = join(process.cwd(), isMCP?"src/app/assets/mcp.png":"src/app/assets/liberty.png");
+        const image = await Image.load(filePath);
+        // Logo
+        printer.image(image, "s8");
         printer
           .beep(1, 1)
           .font("a")
           .size(2, 2)
+          .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
           .style("B")
           .align("CT")
-          .text("SALES RECEIPT.")
+          .text("SALES RECEIPT.") .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
           .size(1, 1)
-          .style("NORMAL")
-          .text(webNameMCP)
-          .text("")
+          .style("NORMAL")       
           .align("LT")
           .style("B")
           .text("Buyer")
@@ -63,13 +68,15 @@ export async function POST(req: Request) {
           .align("LT")
           .style("B")
           .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
+          .text("") // Empty line for spacing
 
           .text("Transaction items")
           .style("NORMAL");
 
         printer.text(`1 x ${name}`);
         printer.text(getLocaleCurrency(amount + balance));
-        printer.text(serialNumber);
+        printer.text(serialNumber||'N/A');
 
         // Calculations
         printer
@@ -104,7 +111,6 @@ export async function POST(req: Request) {
           // Payment details
           .text("------------------------------------------------")
           .style("B")
-          .text("Payment details")
           .style("NORMAL");
 
         // Seller and store details
@@ -113,9 +119,10 @@ export async function POST(req: Request) {
           .style("NORMAL")
           .align("CT")
           .text(`Served by: ${shopSeller}`)
-          .text(`@ ${shopAddress} · Kitgum stage`)
+          .text(`@ ${shopAddress}`)
+          .text(`Kitgum stage`)
           .text(`${shopEmail} · ${ShopContact}`)
-          .text(format(createdAt, "PPPpp"));
+          .text(format(updatedAt, "PPPpp"));
 
         // Finalize
         printer.text("").close();

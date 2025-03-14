@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, sub } from "date-fns";
+import { Loader2Icon } from "lucide-react";
 import BtnPayBalance from "./(tables)/btn-pay-balance";
 import { getAllDefaulters } from "./action";
-import { Loader2Icon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function ListOfDefaulters() {
   const { status, data, error, refetch, isFetching } = useQuery({
@@ -23,9 +24,11 @@ export default function ListOfDefaulters() {
   });
   if (status === "pending") {
     return (
-      <div className="flex flex-col gap-4 justify-center items-center  size-full min-h-[30rem] w-full max-w-md border rounded-md p-4">
-        <p className="text-center max-w-sm text-muted-foreground">Loading defaulters...</p>
-        <Loader2Icon className="size-4 animate-spin"/>
+      <div className="flex flex-col flex-1 gap-4 justify-center items-center  size-full min-h-[30rem] w-full max-w-md border rounded-md p-4">
+        <p className="text-center max-w-sm text-muted-foreground">
+          Loading defaulters...
+        </p>
+        <Loader2Icon className="size-4 animate-spin" />
       </div>
     );
   }
@@ -57,7 +60,7 @@ export default function ListOfDefaulters() {
   }
 
   return (
-    <div className=" space-y-2 hidden lg:flex flex-col ">
+    <div className=" space-y-2   ">
       <h1 className="text-xl font-semibold">List of all defaulters</h1>
       <Table className="border rounded-md ">
         <TableHeader className="bg-secondary">
@@ -71,6 +74,10 @@ export default function ListOfDefaulters() {
         </TableHeader>
         <TableBody>
           {data.map((d, index) => {
+             const balance = d.balance;
+                  const isLessThanSixMonth =
+                    sub(new Date(), { months: 6 }) < d.createdAt;
+            
             return (
               <TableRow key={d.id} className="divide-y-1">
                 <TableCell className="text-muted-foreground">
@@ -86,7 +93,7 @@ export default function ListOfDefaulters() {
                 </TableCell>
                 <TableCell>{formatCurrency(d.balance)}</TableCell>
                 <TableCell className="text-xs">
-                  {format(d.updatedAt, "PPpp")}
+                  <Badge title={isLessThanSixMonth?'Less than six month':'More than six month'} variant={isLessThanSixMonth?'outline':'destructive'}>{format(d.updatedAt, "PPpp")}</Badge>
                 </TableCell>
                 <TableCell>
                   <BtnPayBalance receipt={d} />

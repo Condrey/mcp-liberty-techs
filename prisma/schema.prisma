@@ -14,13 +14,20 @@ datasource db {
 }
 
 model Receipt {
-  id String @id @default(uuid())
-  name String
-  amount Float
-  balance Float
-  contact String
-  client String
-  serialNumber String 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String       @id @default(uuid())
+  name         String
+  amount       Float
+  balance      Float
+  contact      String
+  client       String
+  serialNumber String?
+  model        String?
+  category     ShopCategory @default(MCP)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum ShopCategory {
+  LIBERTY_COMPUTERS
+  MCP
 }
