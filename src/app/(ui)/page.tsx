@@ -25,7 +25,7 @@ export default async function Home({searchParams}:HomeProps) {
   return (
     <div className="flex flex-col xl:flex-row gap-6  xl:gap-4 py-12 size-full px-4 ">
       <div className="w-full max-w-7xl gap-4 flex flex-col justify-center items-center mx-auto ">
-        <h1 className="text-5xl text-center font-bold uppercase  xl:after:content-['_Receipts']">
+        <h1 className="text-xl md:text-5xl text-center font-bold uppercase  xl:after:content-['_Receipts']">
           MCP & Liberty computers
         </h1>
         {/* Graph  */}
