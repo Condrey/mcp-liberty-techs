@@ -3,6 +3,7 @@
 import { DataTable } from "@/components/data-table/data-table";
 import LoadingButton from "@/components/loading-button";
 import { Receipt } from "@prisma/client";
+import Link from "next/link";
 import BtnAddReceipt from "./(tables)/btn-add-receipt";
 import { useReceiptsColumn } from "./(tables)/columns";
 import { useFetchReceiptsQuery } from "./hook";
@@ -47,6 +48,12 @@ export default function ListOfReceipts({ receipts }: ListOfReceiptsProps) {
               </div>
             }
           />
+          <Link
+            href={`https://mcp-liberty-techs.vercel.app/`}
+            className=" w-full text-center underline text-blue-500"
+          >
+            Online link
+          </Link>
         </div>
       )}
     </div>

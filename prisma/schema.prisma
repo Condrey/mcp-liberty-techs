@@ -28,6 +28,6 @@ model Receipt {
 }
 
 enum ShopCategory {
-  LIBERTY_COMPUTERS
   MCP
+  LIBERTY_COMPUTERS
 }
