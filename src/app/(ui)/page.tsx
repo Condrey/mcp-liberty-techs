@@ -1,25 +1,25 @@
+import { PARAM_NAME_CATEGORY } from "@/lib/constants";
+import { allCategories } from "@/lib/enums";
 import { ShopCategory } from "@prisma/client";
 import BtnChooseCategory from "./(tables)/btn-choose-category";
 import { getAllReceipts, getChartData } from "./action";
 import MonthlySalesChart from "./charts/monthly-sales-chart";
 import ListOfDefaulters from "./list-of-defaulters";
 import ListOfReceipts from "./list-of-receipts";
-import { PARAM_NAME_CATEGORY } from "@/lib/constants";
-import { allCategories } from "@/lib/enums";
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
-interface HomeProps{
-  searchParams: SearchParams
+interface HomeProps {
+  searchParams: SearchParams;
 }
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
-export default async function Home({searchParams}:HomeProps) {
-  const category = (await searchParams)[PARAM_NAME_CATEGORY]
+export default async function Home({ searchParams }: HomeProps) {
+  const category = (await searchParams)[PARAM_NAME_CATEGORY];
 
   const [receipts, chartData] = await Promise.all([
     getAllReceipts(),
-    getChartData((category||allCategories[0]) as ShopCategory),
+    getChartData((category || allCategories[0]) as ShopCategory),
   ]);
 
   return (
@@ -29,7 +29,7 @@ export default async function Home({searchParams}:HomeProps) {
           MCP & Liberty computers
         </h1>
         {/* Graph  */}
-        <BtnChooseCategory/>
+        <BtnChooseCategory />
         <MonthlySalesChart receipts={chartData} />
         {/* Previous receipts  */}
         <ListOfReceipts receipts={receipts} />
