@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       serialNumber,
       updatedAt,
       category,
-      model,
+      model, 
     }: Receipt = await req.json();
     const isMCP = category === ShopCategory.MCP;
     const shopSeller = "Oruk Oscar";
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
 
         printer.text(`1 x ${name}`);
         printer.text(getLocaleCurrency(amount + balance));
-        printer.text(serialNumber || "N/A");
+        printer.text(((isMCP ? serialNumber :model)|| "N/A".toUpperCase()));
 
         // Calculations
         printer
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
           .text(format(updatedAt, "PPPpp"));
 
         // Finalize
-        printer.text("").cut().close();
+        printer.text("").close();
       });
     } catch (error) {
       return Response.json("Printer error");
